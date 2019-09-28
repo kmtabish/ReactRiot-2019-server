@@ -32,7 +32,13 @@ app.use(bodyParser.json())
 mongoose.Promise = global.Promise;
 
 // Connecting to the database
-mongoose.connect(dbConfig.url).then(() => {
+mongoose.connect(dbConfig.url, {
+    useNewUrlParser: true,
+    auth: {
+        user: 'tabblack',
+        password: 'black@1986'
+      }
+}).then(() => {
     console.log("Successfully connected to the database");    
 }).catch(err => {
     console.log('Could not connect to the database. Exiting now...', err);
