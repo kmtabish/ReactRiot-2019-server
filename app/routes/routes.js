@@ -6,7 +6,7 @@ module.exports = (app) => {
         // client.on('subscribeToTimer', (interval) => {
         client = client
         app.post('/addUser', (req, res)=>guessTheWord.User.create(req, res, (data)=>{
-            client.emit('timer', data.uname);
+            client.broadcast.emit('timer', data.uname);
             
         }));
           console.log('client is subscribing to timer with interval ');
