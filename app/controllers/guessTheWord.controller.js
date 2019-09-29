@@ -1,9 +1,10 @@
 const User = require('../models/guessTheWord.model.js');
 const Quiz = require('../models/quiz.model.js');
+const Groups = require('../models/groups.model.js');
 var jwt = require('jwt-simple');
 const config = require('../constants/config')
 exports.User = {
-    create : (req, res, cb) => {
+    create : (req, res) => {
         // Validate request
       
         if(!req.body) {
@@ -26,8 +27,6 @@ exports.User = {
         // Save Note in the database
         user.save()
         .then(data => {
-
-            cb(data)
             res.send({data: data, token:token});
         }).catch(err => {
             res.status(500).send({
@@ -38,7 +37,7 @@ exports.User = {
 }
 
 exports.Quiz = {
-get : (req, res) => {
+get : (req, res, cb) => {
     if(!req.headers.authorization){
         res.status(500).send({
             message: "Token is missing"
@@ -47,11 +46,9 @@ get : (req, res) => {
     }
     const token = jwt.decode(req.headers.authorization, config.JWT_SECRET);
     User.find({email: token.email}).then((data) =>{
-        console.log("LLLLL",data, req )
         if(data.length){
             Quiz.find({}).then(notes => {
-        console.log("LLLLL111",notes )
-                
+                 cb(notes, req.body.quizId, req.body.groupId)
                 res.send(notes);
             }).catch(err => {
                 res.status(500).send({
@@ -66,4 +63,30 @@ get : (req, res) => {
     })
   }
 }
-    
+
+exports.Groups = {
+    get : (req, res) => {
+        if(!req.headers.authorization){
+            res.status(500).send({
+                message: "Token is missing"
+            });  
+            return; 
+        }
+        const token = jwt.decode(req.headers.authorization, config.JWT_SECRET);
+        User.find({email: token.email}).then((data) =>{
+            if(data.length){
+                Groups.find({}).then(notes => {
+                    res.send(notes);
+                }).catch(err => {
+                    res.status(500).send({
+                        message: err.message || "Some error occurred while retrieving data."
+                    });
+                });
+            }else{
+                res.status(500).send({
+                    message: "Some error occurred while retrieving data."
+                });
+            }
+        })
+      }
+    }

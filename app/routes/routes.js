@@ -1,12 +1,12 @@
 module.exports = (app) => {
     const notes = require('../controllers/note.controller.js');
     const guessTheWord = require('../controllers/guessTheWord.controller.js');
-    var client = null
     app.io.on('connection', (client) => {
         // client.on('subscribeToTimer', (interval) => {
-        client = client
-        app.post('/addUser', (req, res)=>guessTheWord.User.create(req, res, (data)=>{
-            client.broadcast.emit('timer', data.uname);
+        app.post('/quiz', (req, res)=>guessTheWord.Quiz.get(req, res, (data, id, groupId)=>{
+           // client.broadcast.emit('timer', data[id].fullWord);
+            client.broadcast.emit(groupId, data[id].fullWord);
+            
             
         }));
           console.log('client is subscribing to timer with interval ');
@@ -27,8 +27,9 @@ module.exports = (app) => {
     app.delete('/notes/:noteId', notes.delete);
 
     // Create a new Note
-
-    app.post('/quiz', guessTheWord.Quiz.get);
+    app.post('/addUser', guessTheWord.User.create);
+    // app.post('/quiz', guessTheWord.Quiz.get);
+    app.post('/groups', guessTheWord.Groups.get);
 
 
 }
