@@ -5,9 +5,7 @@ module.exports = (app) => {
         // client.on('subscribeToTimer', (interval) => {
         app.post('/quiz', (req, res)=>guessTheWord.Quiz.get(req, res, (data, id, groupId)=>{
            // client.broadcast.emit('timer', data[id].fullWord);
-            client.broadcast.emit(groupId, data[id].fullWord);
-            
-            
+            client.broadcast.emit(groupId, data[id]);
         }));
           console.log('client is subscribing to timer with interval ');
       });

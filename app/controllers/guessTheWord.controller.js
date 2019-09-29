@@ -49,7 +49,7 @@ get : (req, res, cb) => {
         if(data.length){
             Quiz.find({}).then(notes => {
                  cb(notes, req.body.quizId, req.body.groupId)
-                res.send(notes);
+                res.send(notes[req.body.quizId]);
             }).catch(err => {
                 res.status(500).send({
                     message: err.message || "Some error occurred while retrieving data."
